@@ -1,0 +1,123 @@
+[
+  {
+    "id": "c_w20_disc", "week": "2026-W20", "intent": "product_discovery",
+    "query": "lightweight running shoes under $80, men's size 10",
+    "results": [
+      {"id": "p1", "title": "Avia Flow Lightweight Running Shoe, Men's", "price": 59.0, "category": "athletic shoes", "human_grade": 3},
+      {"id": "p2", "title": "Athletic Works Men's Glide Running Shoe", "price": 45.0, "category": "athletic shoes", "human_grade": 3},
+      {"id": "p3", "title": "No Boundaries Men's Lightweight Trainer", "price": 72.0, "category": "athletic shoes", "human_grade": 2},
+      {"id": "p4", "title": "Avia Men's Basketball Shoe", "price": 68.0, "category": "basketball shoes", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w20_reorder", "week": "2026-W20", "intent": "reorder",
+    "query": "reorder the Purina ONE dog food I bought last month, 15 lb bag",
+    "results": [
+      {"id": "p1", "title": "Purina ONE SmartBlend Chicken & Rice Dry Dog Food, 15 lb", "price": 24.98, "category": "dry dog food", "human_grade": 3},
+      {"id": "p2", "title": "Purina ONE SmartBlend True Instinct Dry Dog Food, 15 lb", "price": 27.0, "category": "dry dog food", "human_grade": 3},
+      {"id": "p3", "title": "Purina ONE SmartBlend Chicken & Rice Dry Dog Food, 31.1 lb", "price": 44.0, "category": "dry dog food", "human_grade": 2},
+      {"id": "p4", "title": "Purina Pro Plan Adult Chicken & Rice Dog Food, 18 lb", "price": 52.0, "category": "dry dog food", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w20_subst", "week": "2026-W20", "intent": "substitution",
+    "query": "oat milk, half gallon",
+    "results": [
+      {"id": "p1", "title": "Great Value Oat Milk, Original, 64 fl oz", "price": 3.48, "category": "plant-based milk", "human_grade": 3},
+      {"id": "p2", "title": "Silk Oat Yeah Oatmilk, Half Gallon", "price": 4.12, "category": "plant-based milk", "human_grade": 3},
+      {"id": "p3", "title": "Planet Oat Oatmilk, 64 fl oz", "price": 3.98, "category": "plant-based milk", "human_grade": 2},
+      {"id": "p4", "title": "Great Value Almond Milk, Original, 64 fl oz", "price": 2.98, "category": "plant-based milk", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w20_price", "week": "2026-W20", "intent": "pricing_constraint",
+    "query": "6-quart programmable pressure cooker under $100",
+    "results": [
+      {"id": "p1", "title": "Instant Pot Duo 6-Quart 7-in-1 Electric Pressure Cooker", "price": 79.0, "category": "pressure cooker", "human_grade": 3},
+      {"id": "p2", "title": "Crock-Pot 6-Quart Express Programmable Pressure Cooker", "price": 59.0, "category": "pressure cooker", "human_grade": 3},
+      {"id": "p3", "title": "Instant Pot Duo Mini 3-Quart Pressure Cooker", "price": 59.0, "category": "pressure cooker", "human_grade": 2},
+      {"id": "p4", "title": "Ninja Foodi 8-Quart Programmable Pressure Cooker", "price": 129.0, "category": "pressure cooker", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w20_diet", "week": "2026-W20", "intent": "dietary_constraint",
+    "query": "gluten-free pasta",
+    "results": [
+      {"id": "p1", "title": "Barilla Gluten Free Penne Pasta", "price": 2.50, "category": "gluten-free pasta", "human_grade": 3},
+      {"id": "p2", "title": "Banza Chickpea Pasta, Rotini", "price": 3.00, "category": "gluten-free pasta", "human_grade": 3},
+      {"id": "p3", "title": "Tinkyada Brown Rice Pasta, Spaghetti", "price": 3.50, "category": "gluten-free pasta", "human_grade": 3},
+      {"id": "p4", "title": "Barilla Classic Spaghetti Pasta", "price": 1.50, "category": "pasta", "human_grade": 0}
+    ]
+  },
+  {
+    "id": "c_w20_gift", "week": "2026-W20", "intent": "gifting",
+    "query": "dinosaur birthday gift for a 5-year-old kid",
+    "results": [
+      {"id": "p1", "title": "Jurassic World Dinosaur Action Figure Set, Ages 4+", "price": 22.0, "category": "kids toys", "human_grade": 3},
+      {"id": "p2", "title": "Dinosaur Fossil Dig Kit for Kids, STEM Toy", "price": 18.0, "category": "kids toys", "human_grade": 3},
+      {"id": "p3", "title": "Dinosaur Wall Decal, Removable, Kids Room", "price": 15.0, "category": "home decor", "human_grade": 1},
+      {"id": "p4", "title": "Adult Dinosaur Graphic T-Shirt, Men's XL", "price": 12.0, "category": "apparel", "human_grade": 0}
+    ]
+  },
+
+  {
+    "id": "c_w21_disc", "week": "2026-W21", "intent": "product_discovery",
+    "query": "lightweight running shoes under $80, men's size 10",
+    "results": [
+      {"id": "p1", "title": "Avia Flow Lightweight Running Shoe, Men's", "price": 59.0, "category": "athletic shoes", "human_grade": 3},
+      {"id": "p2", "title": "Athletic Works Men's Glide Running Shoe", "price": 45.0, "category": "athletic shoes", "human_grade": 3},
+      {"id": "p3", "title": "No Boundaries Men's Lightweight Trainer", "price": 72.0, "category": "athletic shoes", "human_grade": 2},
+      {"id": "p4", "title": "Avia Men's Basketball Shoe", "price": 68.0, "category": "basketball shoes", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w21_reorder", "week": "2026-W21", "intent": "reorder",
+    "query": "reorder the Purina ONE dog food I bought last month, 15 lb bag",
+    "results": [
+      {"id": "p1", "title": "Purina ONE SmartBlend Chicken & Rice Dry Dog Food, 15 lb", "price": 24.98, "category": "dry dog food", "human_grade": 3},
+      {"id": "p2", "title": "Purina ONE SmartBlend True Instinct Dry Dog Food, 15 lb", "price": 27.0, "category": "dry dog food", "human_grade": 3},
+      {"id": "p3", "title": "Purina ONE SmartBlend Chicken & Rice Dry Dog Food, 31.1 lb", "price": 44.0, "category": "dry dog food", "human_grade": 2},
+      {"id": "p4", "title": "Purina Pro Plan Adult Chicken & Rice Dog Food, 18 lb", "price": 52.0, "category": "dry dog food", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w21_subst", "week": "2026-W21", "intent": "substitution",
+    "query": "oat milk, half gallon",
+    "results": [
+      {"id": "p1", "title": "Great Value Oat Milk, Original, 64 fl oz", "price": 3.48, "category": "plant-based milk", "human_grade": 3},
+      {"id": "p2", "title": "Great Value Almond Milk, Original, 64 fl oz", "price": 2.98, "category": "plant-based milk", "human_grade": 1},
+      {"id": "p3", "title": "Horizon Organic Whole Milk, Half Gallon", "price": 4.50, "category": "dairy milk", "human_grade": 0},
+      {"id": "p4", "title": "Silk Almond Milk, Original, 64 fl oz", "price": 3.50, "category": "plant-based milk", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w21_price", "week": "2026-W21", "intent": "pricing_constraint",
+    "query": "6-quart programmable pressure cooker under $100",
+    "results": [
+      {"id": "p1", "title": "Instant Pot Duo 6-Quart 7-in-1 Electric Pressure Cooker", "price": 79.0, "category": "pressure cooker", "human_grade": 3},
+      {"id": "p2", "title": "Crock-Pot 6-Quart Express Programmable Pressure Cooker", "price": 59.0, "category": "pressure cooker", "human_grade": 3},
+      {"id": "p3", "title": "Instant Pot Duo Mini 3-Quart Pressure Cooker", "price": 59.0, "category": "pressure cooker", "human_grade": 2},
+      {"id": "p4", "title": "Ninja Foodi 8-Quart Programmable Pressure Cooker", "price": 129.0, "category": "pressure cooker", "human_grade": 1}
+    ]
+  },
+  {
+    "id": "c_w21_diet", "week": "2026-W21", "intent": "dietary_constraint",
+    "query": "gluten-free pasta",
+    "results": [
+      {"id": "p1", "title": "Barilla Classic Spaghetti Pasta", "price": 1.50, "category": "pasta", "human_grade": 0},
+      {"id": "p2", "title": "Great Value Elbow Macaroni Pasta", "price": 1.00, "category": "pasta", "human_grade": 0},
+      {"id": "p3", "title": "Barilla Gluten Free Penne Pasta", "price": 2.50, "category": "gluten-free pasta", "human_grade": 3},
+      {"id": "p4", "title": "Banza Chickpea Pasta, Rotini", "price": 3.00, "category": "gluten-free pasta", "human_grade": 3}
+    ]
+  },
+  {
+    "id": "c_w21_gift", "week": "2026-W21", "intent": "gifting",
+    "query": "dinosaur birthday gift for a 5-year-old kid",
+    "results": [
+      {"id": "p1", "title": "Jurassic World Dinosaur Action Figure Set, Ages 4+", "price": 22.0, "category": "kids toys", "human_grade": 3},
+      {"id": "p2", "title": "Dinosaur Fossil Dig Kit for Kids, STEM Toy", "price": 18.0, "category": "kids toys", "human_grade": 3},
+      {"id": "p3", "title": "Dinosaur Wall Decal, Removable, Kids Room", "price": 15.0, "category": "home decor", "human_grade": 1},
+      {"id": "p4", "title": "Adult Dinosaur Graphic T-Shirt, Men's XL", "price": 12.0, "category": "apparel", "human_grade": 0}
+    ]
+  }
+]

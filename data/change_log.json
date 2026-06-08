@@ -1,0 +1,6 @@
+[
+  {"date": "2026-04-14", "week": "2026-W21", "area": "ranking", "title": "Recommendation ranker v2.3 rollout (100%)", "impact": "suspected", "note": "Reweighted lexical title match above attribute/constraint match."},
+  {"date": "2026-04-15", "week": "2026-W21", "area": "candidate generation", "title": "Dietary/attribute hard-filter relaxed", "impact": "suspected", "note": "Hard filter softened to a re-ranking signal; off-diet and off-category items became eligible."},
+  {"date": "2026-04-07", "week": "2026-W20", "area": "ux", "title": "Carousel size increased 4 to 5", "impact": "none", "note": "No measurable PSR change."},
+  {"date": "2026-03-31", "week": "2026-W19", "area": "catalog", "title": "Routine grocery catalog refresh", "impact": "none", "note": "No measurable PSR change."}
+]
