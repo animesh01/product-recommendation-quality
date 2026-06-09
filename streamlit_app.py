@@ -239,13 +239,18 @@ def svg_line(points, fmt="{:.0f}", height=300, marker_last=True) -> str:
 # SVG horizontal bars (signed) with value labels — for the intent breakdown
 # --------------------------------------------------------------------------- #
 def svg_change_bars(items, height=None) -> str:
-    """items: list of (label, change_value). Diverging bars around zero, labeled."""
-    row_h = 38
+    """items: list of (label, change_value). Diverging bars around zero, labeled.
+
+    Value labels sit INSIDE the bar (white) when the bar is wide enough, otherwise
+    just past the zero line — so they never collide with the left-hand category labels.
+    """
+    row_h = 40
     H = height or (len(items) * row_h + 30)
     W = 640
-    label_w = 200
-    zero_x = label_w + (W - label_w - 40) / 2
-    half = (W - label_w - 40) / 2
+    label_w = 210
+    right_pad = 28
+    zero_x = label_w + (W - label_w - right_pad) / 2
+    half = (W - label_w - right_pad) / 2
     vmax = max((abs(v) for _, v in items), default=1) or 1
     out = f"<line x1='{zero_x}' y1='10' x2='{zero_x}' y2='{H - 20}' stroke='{BORDER}' stroke-width='1'/>"
     for i, (label, v) in enumerate(items):
@@ -253,13 +258,25 @@ def svg_change_bars(items, height=None) -> str:
         bw = abs(v) / vmax * half
         color = TEAL if v >= 0 else RED
         x = zero_x if v >= 0 else zero_x - bw
-        out += (f"<text x='{label_w - 10}' y='{cy + 5:.1f}' text-anchor='end' font-size='12.5' "
+        # category label (left column, always clear of the plot)
+        out += (f"<text x='{label_w - 14}' y='{cy + 5:.1f}' text-anchor='end' font-size='12.5' "
                 f"fill='{INK}'>{esc(label)}</text>")
-        out += f"<rect x='{x:.1f}' y='{cy - 9:.1f}' width='{bw:.1f}' height='18' rx='4' fill='{color}'/>"
-        lx = (x + bw + 6) if v >= 0 else (x - 6)
-        anchor = "start" if v >= 0 else "end"
-        out += (f"<text x='{lx:.1f}' y='{cy + 5:.1f}' text-anchor='{anchor}' font-family='Manrope' "
-                f"font-weight='800' font-size='12.5' fill='{color}'>{v:+.0f}</text>")
+        # bar
+        out += f"<rect x='{x:.1f}' y='{cy - 10:.1f}' width='{bw:.1f}' height='20' rx='4' fill='{color}'/>"
+        # value label: inside the bar end if wide enough, else just past zero on the value side
+        wide = bw >= 30
+        if v >= 0:
+            if wide:
+                vx, anchor, vfill = x + bw - 8, "end", "#06201a"
+            else:
+                vx, anchor, vfill = zero_x + bw + 7, "start", color
+        else:
+            if wide:
+                vx, anchor, vfill = x + 8, "start", "#2a0f0f"
+            else:
+                vx, anchor, vfill = zero_x - bw - 7, "end", color
+        out += (f"<text x='{vx:.1f}' y='{cy + 5:.1f}' text-anchor='{anchor}' font-family='Manrope' "
+                f"font-weight='800' font-size='12.5' fill='{vfill}'>{v:+.0f}</text>")
     return (f"<svg viewBox='0 0 {W} {H}' width='100%' style='max-width:640px' "
             f"xmlns='http://www.w3.org/2000/svg' role='img'>{out}</svg>")
 
