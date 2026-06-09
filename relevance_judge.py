@@ -132,7 +132,7 @@ class MockJudge:
             grade = 3 if ratio >= 0.45 else 2 if ratio >= 0.30 else 1 if ratio >= 0.15 else 0
             out.append(ProductGrade(
                 p["id"], grade,
-                "Heuristic: query/title keyword overlap only (ignores price, size, diet).",
+                "Matched on words in the title only — this simple checker doesn't read price, size, or dietary limits.",
             ))
         return out
 
