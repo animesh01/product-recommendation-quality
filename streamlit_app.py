@@ -124,7 +124,36 @@ def inject_styles() -> None:
         li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL} !important; }}
         [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:10px; background:{SURFACE}; }}
         [data-testid="stExpander"] summary {{ color:{INK} !important; }}
+        /* everything inside any expander stays readable on dark (inline colors still win) */
+        [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{ background:{SURFACE} !important; }}
+        [data-testid="stExpander"] p,
+        [data-testid="stExpander"] li,
+        [data-testid="stExpander"] strong {{ color:{INK}; }}
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {{ color:{INK}; }}
+        [data-testid="stExpander"] [data-testid="stCaptionContainer"],
+        [data-testid="stExpander"] [data-testid="stCaptionContainer"] * {{ color:{MUTED} !important; }}
         [data-testid="stDataFrame"] {{ background:{SURFACE}; }}
+        /* dataframe cells, headers, and grid lines on dark */
+        [data-testid="stDataFrame"] div[role="gridcell"],
+        [data-testid="stDataFrame"] div[role="columnheader"],
+        [data-testid="stDataFrame"] [data-testid="StyledDataFrameDataCell"],
+        [data-testid="stDataFrame"] [data-testid="StyledDataFrameHeaderCell"] {{
+            background:{SURFACE} !important; color:{INK} !important;
+            border-color:{BORDER} !important; }}
+        [data-testid="stDataFrame"] [role="columnheader"] {{
+            background:{SURFACE2} !important; color:{INK} !important; }}
+        [data-testid="stDataFrame"] * {{ color:{INK} !important; }}
+        .stDataFrame, .stDataFrame > div {{ background:{SURFACE} !important; }}
+        /* code block (executive summary copy box) on dark */
+        [data-testid="stCode"], .stCode {{ background:{SURFACE2} !important; }}
+        [data-testid="stCode"] pre, .stCode pre {{
+            background:{SURFACE2} !important; border:1px solid {BORDER} !important;
+            border-radius:10px !important; }}
+        [data-testid="stCode"] code, .stCode code,
+        [data-testid="stCode"] pre *, .stCode pre * {{
+            color:{INK} !important; background:transparent !important; }}
+        [data-testid="stCode"] button {{ color:{TEAL} !important; }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -250,6 +279,25 @@ def grade_chip(g: int) -> str:
 
 def score_color(v: float) -> str:
     return TEAL if v >= 70 else AMBER if v >= 60 else RED
+
+
+def html_table(headers, rows) -> str:
+    """Render a fully dark-themed HTML table (reliable where st.dataframe isn't)."""
+    head = "".join(
+        f"<th style='text-align:left;padding:9px 12px;font-size:0.78rem;text-transform:uppercase;"
+        f"letter-spacing:0.03em;color:{MUTED};border-bottom:1px solid {BORDER};"
+        f"background:{SURFACE2}'>{esc(h)}</th>" for h in headers
+    )
+    body = ""
+    for row in rows:
+        cells = "".join(
+            f"<td style='padding:9px 12px;font-size:0.9rem;color:{INK};"
+            f"border-bottom:1px solid {BORDER}'>{c}</td>" for c in row
+        )
+        body += f"<tr>{cells}</tr>"
+    return (f"<table style='width:100%;border-collapse:collapse;background:{SURFACE};"
+            f"border:1px solid {BORDER};border-radius:10px;overflow:hidden'>"
+            f"<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>")
 
 
 @st.cache_resource
@@ -386,13 +434,13 @@ with cause_tab:
     st.markdown(svg_change_bars([(b[0], b[1]) for b in breakdown]), unsafe_allow_html=True)
 
     with st.expander("Show the exact numbers"):
-        df = pd.DataFrame([{
-            "Search type": b[0],
-            "Last week": f"{b[2]:.0f}",
-            "This week": f"{b[3]:.0f}",
-            "Change": f"{b[1]:+.0f} pts",
-        } for b in breakdown])
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.markdown(
+            html_table(
+                ["Search type", "Last week", "This week", "Change"],
+                [[esc(b[0]), f"{b[2]:.0f}", f"{b[3]:.0f}", f"{b[1]:+.0f} pts"] for b in breakdown],
+            ),
+            unsafe_allow_html=True,
+        )
 
     worst = breakdown[0] if breakdown else None
     if worst:
@@ -471,17 +519,24 @@ with trust_tab:
     )
 
     with st.expander("See the score the checker gave vs the humans, per carousel"):
-        df = pd.DataFrame([{
-            "Carousel": row["id"],
-            "Week": row["week"].replace("2026-", ""),
-            "Search type": INTENT_PLAIN.get(row["intent"], row["intent"]),
-            "Checker score": f"{row['psr_j']:.0f}",
-            "Human score": f"{row['psr_h']:.0f}",
-            "Gap": f"{row['psr_j'] - row['psr_h']:+.0f}",
-        } for row in rows])
-        st.dataframe(df, use_container_width=True, hide_index=True)
-        st.caption("A positive gap means the checker was too generous — usually because it missed a "
-                   "constraint the humans caught.")
+        trows = []
+        for row in rows:
+            gap = row["psr_j"] - row["psr_h"]
+            gap_col = RED if gap > 5 else TEAL if gap >= -5 else AMBER
+            trows.append([
+                esc(row["id"]),
+                esc(row["week"].replace("2026-", "")),
+                esc(INTENT_PLAIN.get(row["intent"], row["intent"])),
+                f"{row['psr_j']:.0f}",
+                f"{row['psr_h']:.0f}",
+                f"<b style='color:{gap_col}'>{gap:+.0f}</b>",
+            ])
+        st.markdown(
+            html_table(["Carousel", "Week", "Search type", "Checker score", "Human score", "Gap"], trows),
+            unsafe_allow_html=True,
+        )
+        st.caption("A positive gap (red) means the checker was too generous — usually because it "
+                   "missed a constraint the humans caught.")
 
 # ============================ TRY IT YOURSELF ============================== #
 with try_tab:
