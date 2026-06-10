@@ -146,12 +146,21 @@ def inject_styles() -> None:
         .exec-card li {{ margin:6px 0; line-height:1.5; color:#565d66; }}
 
         /* ---- Streamlit native widgets retuned for light ---- */
-        .stTabs [data-baseweb="tab-list"] {{ gap:6px; }}
-        .stTabs [data-baseweb="tab"] {{ color:{MUTED} !important; border-radius:10px 10px 0 0; }}
+        /* ---- tabs as bubble-pop pills ---- */
+        .stTabs [data-baseweb="tab-list"] {{ gap:10px; border-bottom:none !important; padding:4px 0 6px; }}
+        .stTabs [data-baseweb="tab"] {{
+            background:#fff !important; color:{MUTED} !important; border:1px solid {BORDER} !important;
+            border-radius:999px !important; padding:8px 18px !important; height:auto !important;
+            box-shadow:0 4px 10px -6px rgba(20,32,55,.25), inset 0 1px 0 #fff !important;
+            transition:transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, background .25s !important; }}
         .stTabs [data-baseweb="tab"] * {{ color:{MUTED} !important; }}
-        .stTabs [data-baseweb="tab"][aria-selected="true"],
-        .stTabs [data-baseweb="tab"][aria-selected="true"] * {{ color:{TEAL_DEEP} !important; }}
-        .stTabs [data-baseweb="tab-highlight"] {{ background:{TEAL} !important; }}
+        .stTabs [data-baseweb="tab"]:hover {{ transform:translateY(-2px) !important;
+            box-shadow:0 8px 16px -8px rgba(20,32,55,.3) !important; }}
+        .stTabs [data-baseweb="tab"][aria-selected="true"] {{
+            background:#eef4fb !important; border-color:#cfe0f5 !important; transform:translateY(-3px) !important;
+            box-shadow:0 10px 20px -8px rgba(47,127,214,.4), inset 0 1px 0 #fff !important; }}
+        .stTabs [data-baseweb="tab"][aria-selected="true"] * {{ color:{TEAL_DEEP} !important; font-weight:700 !important; }}
+        .stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {{ display:none !important; background:transparent !important; }}
         .stButton button[kind="primary"] {{ background:linear-gradient(180deg,{TEAL},{TEAL_DEEP}) !important;
             color:#fff !important; border:none !important; font-weight:700 !important; border-radius:12px !important;
             box-shadow:0 8px 18px -6px rgba(31,111,204,.5), inset 0 1px 0 rgba(255,255,255,.2) !important; }}
@@ -164,7 +173,10 @@ def inject_styles() -> None:
         li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL_DEEP} !important; }}
         [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:14px; background:#fff;
             box-shadow:0 6px 14px -10px rgba(20,32,55,.3); overflow:hidden; }}
-        /* expander HEADER — force dark, readable text no matter how Streamlit nests it */
+        /* expander HEADER — matches the verdict pill: light blue-tint bg, dark readable text */
+        [data-testid="stExpander"] details > summary,
+        [data-testid="stExpander"] summary {{
+            background:#eef4fb !important; border-bottom:1px solid #d8e6f5 !important; }}
         [data-testid="stExpander"] details > summary,
         [data-testid="stExpander"] details > summary *,
         [data-testid="stExpander"] summary,
@@ -173,7 +185,7 @@ def inject_styles() -> None:
         [data-testid="stExpander"] [class*="Header"] *,
         [data-testid="stExpander"] [data-testid*="xpander"] > div:first-child,
         [data-testid="stExpander"] [data-testid*="xpander"] > div:first-child * {{
-            color:{INK} !important; -webkit-text-fill-color:{INK} !important; fill:{INK} !important; }}
+            color:{INK} !important; -webkit-text-fill-color:{INK} !important; fill:{INK} !important; font-weight:700 !important; }}
         [data-testid="stExpander"] summary:hover,
         [data-testid="stExpander"] summary:hover *,
         [data-testid="stExpander"] details > summary:hover * {{
@@ -184,8 +196,8 @@ def inject_styles() -> None:
         [data-testid="stExpander"] strong {{ color:{INK} !important; -webkit-text-fill-color:{INK} !important; }}
         [data-testid="stExpander"] [data-testid="stMarkdownContainer"],
         [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {{ color:{INK} !important; }}
-        [data-testid="stExpander"] [data-testid="stCaptionContainer"],
-        [data-testid="stExpander"] [data-testid="stCaptionContainer"] * {{ color:{MUTED} !important; }}
+        [data-testid="stExpander"] [data-testid="stExpanderDetails"] [data-testid="stCaptionContainer"],
+        [data-testid="stExpander"] [data-testid="stExpanderDetails"] [data-testid="stCaptionContainer"] * {{ color:{MUTED} !important; }}
         [data-testid="stDataFrame"] {{ background:#fff; border-radius:12px; box-shadow:0 6px 14px -10px rgba(20,32,55,.3); }}
         [data-testid="stDataFrame"] div[role="gridcell"],
         [data-testid="stDataFrame"] div[role="columnheader"],
