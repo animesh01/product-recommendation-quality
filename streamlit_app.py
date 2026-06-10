@@ -1,4 +1,4 @@
-"""Product Set Relevance (PSR) — a plain-language relevance report for an AI shopping assistant.
+"""Product Recommendation Quality (PSR) — a plain-language relevance report for an AI shopping assistant.
 
 PSR grades each product in the assistant's carousel from 0 to 3 against what the customer
 asked for, averages that to a 0-100 score per carousel, tracks it week over week, and — when
