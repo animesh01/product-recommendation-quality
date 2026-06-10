@@ -162,7 +162,18 @@ def inject_styles() -> None:
         li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL_DEEP} !important; }}
         [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:14px; background:#fff;
             box-shadow:0 6px 14px -10px rgba(20,32,55,.3); overflow:hidden; }}
-        [data-testid="stExpander"] summary {{ color:{INK} !important; }}
+        /* expander HEADER (the clickable drill-down title) — keep it dark & readable on white */
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] summary *,
+        [data-testid="stExpander"] details > summary,
+        [data-testid="stExpander"] [data-testid="stExpanderToggleIcon"],
+        [data-testid="stExpander"] summary p,
+        [data-testid="stExpander"] summary span,
+        [data-testid="stExpander"] summary [data-testid="stMarkdownContainer"],
+        [data-testid="stExpander"] summary [data-testid="stMarkdownContainer"] * {{
+            color:{INK} !important; fill:{INK} !important; }}
+        [data-testid="stExpander"] summary:hover,
+        [data-testid="stExpander"] summary:hover * {{ color:{TEAL_DEEP} !important; }}
         [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{ background:#fff !important; }}
         [data-testid="stExpander"] p,
         [data-testid="stExpander"] li,
@@ -300,12 +311,12 @@ def svg_change_bars(items, height=None) -> str:
         wide = bw >= 30
         if v >= 0:
             if wide:
-                vx, anchor, vfill = x + bw - 8, "end", "#06201a"
+                vx, anchor, vfill = x + bw - 8, "end", "#ffffff"
             else:
                 vx, anchor, vfill = zero_x + bw + 7, "start", color
         else:
             if wide:
-                vx, anchor, vfill = x + 8, "start", "#2a0f0f"
+                vx, anchor, vfill = x + 8, "start", "#ffffff"
             else:
                 vx, anchor, vfill = zero_x - bw - 7, "end", color
         out += (f"<text x='{vx:.1f}' y='{cy + 5:.1f}' text-anchor='{anchor}' font-family='Manrope' "
@@ -315,14 +326,12 @@ def svg_change_bars(items, height=None) -> str:
 
 
 def grade_chip(g: int) -> str:
-    if g >= 3:
-        bg, fg = "#13332b", TEAL
-    elif g == 2:
-        bg, fg = "#13332b", TEAL
+    if g >= 2:
+        bg, fg = "#e1f5ee", "#0f7d62"   # good — light teal tint, dark green text
     elif g == 1:
-        bg, fg = "#33280f", AMBER
+        bg, fg = "#fbf1dc", "#9a6a14"   # off — light amber tint, dark amber text
     else:
-        bg, fg = "#3a1d1d", RED
+        bg, fg = "#fbe9e6", "#c1422c"   # wrong — light coral tint, dark red text
     return (f"<span style='display:inline-block;min-width:24px;text-align:center;padding:2px 7px;"
             f"border-radius:6px;font-weight:700;background:{bg};color:{fg}'>{g}</span>")
 
@@ -332,7 +341,7 @@ def score_color(v: float) -> str:
 
 
 def html_table(headers, rows) -> str:
-    """Render a fully dark-themed HTML table (reliable where st.dataframe isn't)."""
+    """Render a fully styled HTML table (reliable where st.dataframe isn't)."""
     head = "".join(
         f"<th style='text-align:left;padding:9px 12px;font-size:0.78rem;text-transform:uppercase;"
         f"letter-spacing:0.03em;color:{MUTED};border-bottom:1px solid {BORDER};"
@@ -418,7 +427,7 @@ st.markdown(
       <p>Every time the AI shopping assistant shows a row of products, we check how well those
       products actually match what the customer asked for — then track it weekly and explain any change.</p>
       <div class="verdict">
-      This week: relevance <span style="color:{'#ff9b8c' if moved_down else '#5fe0bd'} !important;font-weight:800">{'dropped' if moved_down else 'rose'} {abs(wow):.0f} points</span> ({last_h:.0f} → {this_h:.0f})</div>
+      This week: relevance <span style="color:{'#ff8f7a' if moved_down else '#5fe0bd'} !important;font-weight:800">{'dropped' if moved_down else 'rose'} {abs(wow):.0f} points</span> ({last_h:.0f} → {this_h:.0f})</div>
     </div>
     """,
     unsafe_allow_html=True,
