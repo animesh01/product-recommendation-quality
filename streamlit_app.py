@@ -98,9 +98,9 @@ def inject_styles() -> None:
             background:#e7f0fb; color:{TEAL_DEEP} !important; font-size:0.72rem; font-weight:700;
             letter-spacing:0.06em; text-transform:uppercase; box-shadow:inset 0 1px 0 #fff; }}
         .hero .verdict {{ margin-top:20px; display:inline-block;
-            background:linear-gradient(180deg,#1f2c40,#121a28); color:#fff !important;
+            background:#eef4fb; border:1px solid #d8e6f5; color:{INK} !important;
             font-weight:800; font-family:Manrope; font-size:1.0rem; padding:12px 19px; border-radius:14px;
-            box-shadow:0 10px 22px -8px rgba(20,32,70,.5), inset 0 1px 0 rgba(255,255,255,.12); }}
+            box-shadow:0 6px 14px -8px rgba(20,32,55,.22), inset 0 1px 0 #fff; }}
         .hero-art {{ position:absolute; right:30px; top:30px; opacity:0.95;
             filter:drop-shadow(0 10px 16px rgba(20,32,55,.16)); }}
 
@@ -147,8 +147,10 @@ def inject_styles() -> None:
 
         /* ---- Streamlit native widgets retuned for light ---- */
         .stTabs [data-baseweb="tab-list"] {{ gap:6px; }}
-        .stTabs [data-baseweb="tab"] {{ color:{MUTED}; border-radius:10px 10px 0 0; }}
-        .stTabs [aria-selected="true"] {{ color:{TEAL_DEEP}; }}
+        .stTabs [data-baseweb="tab"] {{ color:{MUTED} !important; border-radius:10px 10px 0 0; }}
+        .stTabs [data-baseweb="tab"] * {{ color:{MUTED} !important; }}
+        .stTabs [data-baseweb="tab"][aria-selected="true"],
+        .stTabs [data-baseweb="tab"][aria-selected="true"] * {{ color:{TEAL_DEEP} !important; }}
         .stTabs [data-baseweb="tab-highlight"] {{ background:{TEAL} !important; }}
         .stButton button[kind="primary"] {{ background:linear-gradient(180deg,{TEAL},{TEAL_DEEP}) !important;
             color:#fff !important; border:none !important; font-weight:700 !important; border-radius:12px !important;
@@ -162,24 +164,26 @@ def inject_styles() -> None:
         li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL_DEEP} !important; }}
         [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:14px; background:#fff;
             box-shadow:0 6px 14px -10px rgba(20,32,55,.3); overflow:hidden; }}
-        /* expander HEADER (the clickable drill-down title) — keep it dark & readable on white */
+        /* expander HEADER — force dark, readable text no matter how Streamlit nests it */
+        [data-testid="stExpander"] details > summary,
+        [data-testid="stExpander"] details > summary *,
         [data-testid="stExpander"] summary,
         [data-testid="stExpander"] summary *,
-        [data-testid="stExpander"] details > summary,
-        [data-testid="stExpander"] [data-testid="stExpanderToggleIcon"],
-        [data-testid="stExpander"] summary p,
-        [data-testid="stExpander"] summary span,
-        [data-testid="stExpander"] summary [data-testid="stMarkdownContainer"],
-        [data-testid="stExpander"] summary [data-testid="stMarkdownContainer"] * {{
-            color:{INK} !important; fill:{INK} !important; }}
+        [data-testid="stExpander"] [class*="Header"],
+        [data-testid="stExpander"] [class*="Header"] *,
+        [data-testid="stExpander"] [data-testid*="xpander"] > div:first-child,
+        [data-testid="stExpander"] [data-testid*="xpander"] > div:first-child * {{
+            color:{INK} !important; -webkit-text-fill-color:{INK} !important; fill:{INK} !important; }}
         [data-testid="stExpander"] summary:hover,
-        [data-testid="stExpander"] summary:hover * {{ color:{TEAL_DEEP} !important; }}
+        [data-testid="stExpander"] summary:hover *,
+        [data-testid="stExpander"] details > summary:hover * {{
+            color:{TEAL_DEEP} !important; -webkit-text-fill-color:{TEAL_DEEP} !important; }}
         [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{ background:#fff !important; }}
         [data-testid="stExpander"] p,
         [data-testid="stExpander"] li,
-        [data-testid="stExpander"] strong {{ color:{INK}; }}
+        [data-testid="stExpander"] strong {{ color:{INK} !important; -webkit-text-fill-color:{INK} !important; }}
         [data-testid="stExpander"] [data-testid="stMarkdownContainer"],
-        [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {{ color:{INK}; }}
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {{ color:{INK} !important; }}
         [data-testid="stExpander"] [data-testid="stCaptionContainer"],
         [data-testid="stExpander"] [data-testid="stCaptionContainer"] * {{ color:{MUTED} !important; }}
         [data-testid="stDataFrame"] {{ background:#fff; border-radius:12px; box-shadow:0 6px 14px -10px rgba(20,32,55,.3); }}
@@ -427,7 +431,7 @@ st.markdown(
       <p>Every time the AI shopping assistant shows a row of products, we check how well those
       products actually match what the customer asked for — then track it weekly and explain any change.</p>
       <div class="verdict">
-      This week: relevance <span style="color:{'#ff8f7a' if moved_down else '#5fe0bd'} !important;font-weight:800">{'dropped' if moved_down else 'rose'} {abs(wow):.0f} points</span> ({last_h:.0f} → {this_h:.0f})</div>
+      This week: relevance <span style="color:{'#c1422c' if moved_down else '#0f7d62'} !important;font-weight:800">{'dropped' if moved_down else 'rose'} {abs(wow):.0f} points</span> ({last_h:.0f} → {this_h:.0f})</div>
     </div>
     """,
     unsafe_allow_html=True,
