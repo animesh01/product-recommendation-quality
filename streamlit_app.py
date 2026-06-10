@@ -22,19 +22,21 @@ from relevance_judge import get_judge
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 
-# Dark theme palette
-BG = "#0f1715"
-SURFACE = "#16211e"
-SURFACE2 = "#1d2b27"
-BORDER = "#2a3a35"
-TEAL = "#3fd6ab"
-TEAL_DEEP = "#0d766e"
-INK = "#eaf2ef"
-MUTED = "#90a39d"
-AMBER = "#e0a23c"
-RED = "#e26d6d"
-BLUE = "#6aa3e0"
-SAND = "#241f17"
+# Option C — Cool Mist + Electric Blue (light, 3D-pop theme)
+BG = "#e6edf3"          # cool misty canvas
+SURFACE = "#ffffff"     # raised card surface
+SURFACE2 = "#f1f5f9"    # tinted inner surface
+BORDER = "#e4ebf2"      # hairline border
+TEAL = "#2f7fd6"        # primary accent (electric blue, slight indigo lean)
+TEAL_DEEP = "#1f6fcc"   # deeper accent
+INK = "#16202c"         # near-black text
+MUTED = "#74808e"       # muted label text
+AMBER = "#dd9421"       # warning signal
+RED = "#e8654f"         # negative signal
+BLUE = "#2f7fd6"        # accent alias
+SAND = "#eef3f9"        # takeaway tint
+CHARCOAL = "#162132"    # dark focal panel base
+GREEN = "#22b892"       # positive signal
 
 st.set_page_config(page_title="PRQ — Product Recommendation Quality", page_icon="🛒",
                    layout="wide", initial_sidebar_state="collapsed")
@@ -73,59 +75,95 @@ def inject_styles() -> None:
         f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
-        .stApp {{ background:{BG}; }}
+        /* cool misty canvas with a soft top-corner light source */
+        .stApp {{ background:
+            radial-gradient(1200px 500px at 18% -8%, #f1f7fc 0%, rgba(241,247,252,0) 60%),
+            linear-gradient(180deg, #e6edf3 0%, #dfe7ef 100%); }}
         html, body, [class*="css"] {{ font-family:"DM Sans",sans-serif; color:{INK}; }}
-        h1,h2,h3,h4,h5 {{ font-family:"Manrope",sans-serif !important; letter-spacing:-0.02em; color:{INK} !important; }}
+        h1,h2,h3,h4,h5 {{ font-family:"Manrope",sans-serif !important; letter-spacing:-0.025em; color:{INK} !important; }}
         p, span, div, label, li, td, th {{ color:{INK}; }}
         [data-testid="stCaptionContainer"], .stCaption {{ color:{MUTED} !important; }}
-        .hero {{ border-radius:20px; padding:30px 34px; margin-bottom:18px; color:#fff;
-            background:linear-gradient(135deg,#0b5f59 0%,#0f8a73 58%,#19c79f 100%);
-            position:relative; overflow:hidden;
-            box-shadow:0 0 0 1px rgba(63,214,171,0.18), 0 18px 50px -20px rgba(25,199,159,0.45); }}
-        .hero h1 {{ color:#fff !important; font-size:2.05rem; margin:8px 0 6px; }}
-        .hero p {{ color:#e7f6f1 !important; font-size:1.02rem; line-height:1.5; max-width:78%; margin:0; }}
-        .hero .pill {{ display:inline-block; padding:4px 13px; border-radius:999px;
-            background:rgba(255,255,255,0.18); color:#fff !important; font-size:0.74rem; font-weight:700;
-            letter-spacing:0.06em; text-transform:uppercase; }}
-        .hero .verdict {{ margin-top:16px; display:inline-block; background:#0c2a25; color:#fff;
-            font-weight:800; font-family:Manrope; font-size:1.02rem; padding:9px 16px; border-radius:11px; }}
-        .hero-art {{ position:absolute; right:-8px; bottom:-10px; opacity:0.9; }}
-        .section-title {{ font-family:Manrope; font-weight:800; font-size:1.3rem; margin:8px 0 2px; }}
-        .section-copy {{ color:{MUTED}; font-size:0.97rem; margin-bottom:14px; max-width:800px; line-height:1.5; }}
-        .mcard {{ background:{SURFACE}; border:1px solid {BORDER}; border-radius:14px; padding:16px 18px; height:100%; }}
-        .mcard .lbl {{ font-size:0.78rem; font-weight:700; color:{MUTED}; text-transform:uppercase; letter-spacing:0.04em; }}
-        .mcard .val {{ font-family:Manrope; font-weight:800; font-size:1.9rem; line-height:1.1; margin:5px 0 5px; }}
-        .mcard .def {{ font-size:0.79rem; color:{MUTED}; line-height:1.4; }}
-        .takeaway {{ background:{SAND}; border-radius:12px; padding:13px 16px; font-size:0.96rem;
-            line-height:1.55; margin:8px 0 6px; }}
-        .takeaway b {{ font-family:Manrope; }}
-        .tag {{ font-size:0.78rem; font-weight:700; padding:3px 10px; border-radius:999px; }}
-        .tag-good {{ background:#13332b; color:{TEAL}; }}
-        .tag-bad {{ background:#3a1d1d; color:{RED}; }}
-        .tag-warn {{ background:#33280f; color:{AMBER}; }}
-        .exec-card {{ background:{SURFACE}; border:2px solid {TEAL}; border-radius:18px; padding:24px 28px;
-            box-shadow:0 6px 24px -12px rgba(63,214,171,0.4); }}
+
+        /* ---- hero: highest-elevation raised slab with edge-light ---- */
+        .hero {{ position:relative; overflow:hidden; border-radius:24px; padding:32px 36px; margin-bottom:20px;
+            background:linear-gradient(180deg,#ffffff 0%,#fafcfe 100%); border:1px solid {BORDER};
+            box-shadow:0 2px 2px rgba(20,32,55,.05), 0 14px 28px -8px rgba(20,32,55,.18), 0 40px 64px -22px rgba(20,32,55,.30); }}
+        .hero::before {{ content:""; position:absolute; inset:0 0 auto 0; height:1px; border-radius:24px 24px 0 0;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent); }}
+        .hero::after {{ content:""; position:absolute; right:-60px; top:-60px; width:260px; height:260px; border-radius:50%;
+            background:radial-gradient(circle at 30% 30%, rgba(47,127,214,.08), rgba(47,127,214,0) 70%); pointer-events:none; }}
+        .hero h1 {{ color:{INK} !important; font-size:2.2rem; margin:14px 0 8px; }}
+        .hero p {{ color:#5a6573 !important; font-size:1.02rem; line-height:1.55; max-width:74%; margin:0; }}
+        .hero .pill {{ display:inline-block; padding:6px 15px; border-radius:999px;
+            background:#e7f0fb; color:{TEAL_DEEP} !important; font-size:0.72rem; font-weight:700;
+            letter-spacing:0.06em; text-transform:uppercase; box-shadow:inset 0 1px 0 #fff; }}
+        .hero .verdict {{ margin-top:20px; display:inline-block;
+            background:linear-gradient(180deg,#1f2c40,#121a28); color:#fff !important;
+            font-weight:800; font-family:Manrope; font-size:1.0rem; padding:12px 19px; border-radius:14px;
+            box-shadow:0 10px 22px -8px rgba(20,32,70,.5), inset 0 1px 0 rgba(255,255,255,.12); }}
+        .hero-art {{ position:absolute; right:30px; top:30px; opacity:0.95;
+            filter:drop-shadow(0 10px 16px rgba(20,32,55,.16)); }}
+
+        .section-title {{ font-family:Manrope; font-weight:800; font-size:1.3rem; margin:10px 0 2px; letter-spacing:-0.015em; }}
+        .section-copy {{ color:{MUTED}; font-size:0.97rem; margin-bottom:16px; max-width:800px; line-height:1.5; }}
+
+        /* ---- metric cards: floating, edge-lit, hover-lift ---- */
+        .mcard {{ position:relative; background:linear-gradient(180deg,#fff,#fafcfe); border:1px solid {BORDER};
+            border-radius:20px; padding:20px 22px; height:100%;
+            box-shadow:0 1px 1px rgba(20,32,55,.04), 0 6px 12px -3px rgba(20,32,55,.10), 0 20px 34px -12px rgba(20,32,55,.18);
+            transition:transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }}
+        .mcard::before {{ content:""; position:absolute; inset:0 0 auto 0; height:1px; border-radius:20px 20px 0 0;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent); }}
+        .mcard:hover {{ transform:translateY(-5px);
+            box-shadow:0 2px 2px rgba(20,32,55,.05), 0 10px 18px -4px rgba(20,32,55,.16), 0 30px 50px -16px rgba(20,32,55,.26); }}
+        .mcard .lbl {{ font-size:0.74rem; font-weight:700; color:{MUTED}; text-transform:uppercase; letter-spacing:0.05em; }}
+        .mcard .val {{ font-family:Manrope; font-weight:800; font-size:2.2rem; line-height:1.05; margin:10px 0 8px; letter-spacing:-0.03em; }}
+        .mcard .def {{ font-size:0.79rem; color:#9aa3ad; line-height:1.45; }}
+
+        /* ---- takeaway: floating tinted slab with accent edge ---- */
+        .takeaway {{ background:linear-gradient(180deg,#fff,#fafcfe); border:1px solid {BORDER};
+            border-left:3px solid {CHARCOAL}; border-radius:16px; padding:16px 20px; font-size:0.96rem;
+            line-height:1.55; margin:10px 0 6px; color:#565d66;
+            box-shadow:0 1px 1px rgba(20,32,55,.04), 0 6px 12px -3px rgba(20,32,55,.10), 0 20px 34px -12px rgba(20,32,55,.16); }}
+        .takeaway b {{ font-family:Manrope; color:{INK}; }}
+
+        .tag {{ font-size:0.76rem; font-weight:700; padding:5px 12px; border-radius:10px; box-shadow:inset 0 1px 0 #fff; }}
+        .tag-good {{ background:#e1f5ee; color:#0f7d62; }}
+        .tag-bad {{ background:#fbe9e6; color:#c1422c; }}
+        .tag-warn {{ background:#fbf1dc; color:#9a6a14; }}
+
+        /* ---- exec card: deep raised slab ---- */
+        .exec-card {{ position:relative; overflow:hidden; background:linear-gradient(180deg,#fff,#f8fafd);
+            border:1px solid {BORDER}; border-radius:22px; padding:24px 28px;
+            box-shadow:0 2px 2px rgba(20,32,55,.05), 0 14px 28px -8px rgba(20,32,55,.18), 0 40px 64px -22px rgba(20,32,55,.28); }}
+        .exec-card::before {{ content:""; position:absolute; inset:0 0 auto 0; height:3px; background:{TEAL};
+            border-radius:22px 22px 0 0; }}
         .exec-card h2 {{ font-size:1.35rem; margin:0 0 4px; }}
         .exec-card .kpi {{ display:flex; gap:26px; flex-wrap:wrap; margin:14px 0 16px; }}
         .exec-card .kpi .n {{ font-family:Manrope; font-weight:800; font-size:1.5rem; }}
         .exec-card .kpi .l {{ font-size:0.76rem; color:{MUTED}; text-transform:uppercase; letter-spacing:0.04em; }}
         .exec-card ul {{ margin:8px 0 0; padding-left:20px; }}
-        .exec-card li {{ margin:6px 0; line-height:1.5; }}
-        .stTabs [data-baseweb="tab"] {{ color:{MUTED}; }}
-        .stTabs [aria-selected="true"] {{ color:{INK}; }}
-        .stButton button[kind="primary"] {{ background:{TEAL} !important; color:#06201a !important;
-            border:none !important; font-weight:600 !important; }}
-        .stButton button[kind="primary"]:hover {{ background:#5fe2bd !important; color:#06201a !important; }}
+        .exec-card li {{ margin:6px 0; line-height:1.5; color:#565d66; }}
+
+        /* ---- Streamlit native widgets retuned for light ---- */
+        .stTabs [data-baseweb="tab-list"] {{ gap:6px; }}
+        .stTabs [data-baseweb="tab"] {{ color:{MUTED}; border-radius:10px 10px 0 0; }}
+        .stTabs [aria-selected="true"] {{ color:{TEAL_DEEP}; }}
+        .stTabs [data-baseweb="tab-highlight"] {{ background:{TEAL} !important; }}
+        .stButton button[kind="primary"] {{ background:linear-gradient(180deg,{TEAL},{TEAL_DEEP}) !important;
+            color:#fff !important; border:none !important; font-weight:700 !important; border-radius:12px !important;
+            box-shadow:0 8px 18px -6px rgba(31,111,204,.5), inset 0 1px 0 rgba(255,255,255,.2) !important; }}
+        .stButton button[kind="primary"]:hover {{ filter:brightness(1.06); transform:translateY(-1px); }}
         [data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
-            background:{SURFACE} !important; border-color:{TEAL} !important; color:{INK} !important; }}
+            background:#fff !important; border-color:{BORDER} !important; color:{INK} !important; border-radius:12px !important; }}
         [data-testid="stSelectbox"] svg {{ fill:{TEAL} !important; }}
-        ul[role="listbox"], div[data-baseweb="popover"], div[data-baseweb="menu"] {{ background:{SURFACE} !important; }}
-        li[role="option"] {{ background:{SURFACE} !important; color:{INK} !important; }}
-        li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL} !important; }}
-        [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:10px; background:{SURFACE}; }}
+        ul[role="listbox"], div[data-baseweb="popover"], div[data-baseweb="menu"] {{ background:#fff !important; }}
+        li[role="option"] {{ background:#fff !important; color:{INK} !important; }}
+        li[role="option"]:hover, li[role="option"][aria-selected="true"] {{ background:{SURFACE2} !important; color:{TEAL_DEEP} !important; }}
+        [data-testid="stExpander"] {{ border:1px solid {BORDER} !important; border-radius:14px; background:#fff;
+            box-shadow:0 6px 14px -10px rgba(20,32,55,.3); overflow:hidden; }}
         [data-testid="stExpander"] summary {{ color:{INK} !important; }}
-        /* everything inside any expander stays readable on dark (inline colors still win) */
-        [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{ background:{SURFACE} !important; }}
+        [data-testid="stExpander"] [data-testid="stExpanderDetails"] {{ background:#fff !important; }}
         [data-testid="stExpander"] p,
         [data-testid="stExpander"] li,
         [data-testid="stExpander"] strong {{ color:{INK}; }}
@@ -133,23 +171,18 @@ def inject_styles() -> None:
         [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {{ color:{INK}; }}
         [data-testid="stExpander"] [data-testid="stCaptionContainer"],
         [data-testid="stExpander"] [data-testid="stCaptionContainer"] * {{ color:{MUTED} !important; }}
-        [data-testid="stDataFrame"] {{ background:{SURFACE}; }}
-        /* dataframe cells, headers, and grid lines on dark */
+        [data-testid="stDataFrame"] {{ background:#fff; border-radius:12px; box-shadow:0 6px 14px -10px rgba(20,32,55,.3); }}
         [data-testid="stDataFrame"] div[role="gridcell"],
         [data-testid="stDataFrame"] div[role="columnheader"],
         [data-testid="stDataFrame"] [data-testid="StyledDataFrameDataCell"],
         [data-testid="stDataFrame"] [data-testid="StyledDataFrameHeaderCell"] {{
-            background:{SURFACE} !important; color:{INK} !important;
-            border-color:{BORDER} !important; }}
-        [data-testid="stDataFrame"] [role="columnheader"] {{
-            background:{SURFACE2} !important; color:{INK} !important; }}
+            background:#fff !important; color:{INK} !important; border-color:{BORDER} !important; }}
+        [data-testid="stDataFrame"] [role="columnheader"] {{ background:{SURFACE2} !important; color:{INK} !important; }}
         [data-testid="stDataFrame"] * {{ color:{INK} !important; }}
-        .stDataFrame, .stDataFrame > div {{ background:{SURFACE} !important; }}
-        /* code block (executive summary copy box) on dark */
+        .stDataFrame, .stDataFrame > div {{ background:#fff !important; }}
         [data-testid="stCode"], .stCode {{ background:{SURFACE2} !important; }}
         [data-testid="stCode"] pre, .stCode pre {{
-            background:{SURFACE2} !important; border:1px solid {BORDER} !important;
-            border-radius:10px !important; }}
+            background:{SURFACE2} !important; border:1px solid {BORDER} !important; border-radius:12px !important; }}
         [data-testid="stCode"] code, .stCode code,
         [data-testid="stCode"] pre *, .stCode pre * {{
             color:{INK} !important; background:transparent !important; }}
@@ -295,7 +328,7 @@ def grade_chip(g: int) -> str:
 
 
 def score_color(v: float) -> str:
-    return TEAL if v >= 70 else AMBER if v >= 60 else RED
+    return GREEN if v >= 70 else AMBER if v >= 60 else RED
 
 
 def html_table(headers, rows) -> str:
@@ -355,13 +388,26 @@ moved_down = wow < 0
 
 # ---- Hero ----------------------------------------------------------------- #
 art = (
-    "<svg class='hero-art' width='210' height='140' viewBox='0 0 210 140' fill='none'>"
-    "<rect x='26' y='40' width='150' height='86' rx='10' fill='rgba(255,255,255,0.12)'/>"
-    "<rect x='40' y='54' width='36' height='58' rx='6' fill='rgba(255,255,255,0.9)'/>"
-    "<rect x='86' y='54' width='36' height='58' rx='6' fill='rgba(255,255,255,0.55)'/>"
-    "<rect x='132' y='54' width='36' height='58' rx='6' fill='rgba(255,255,255,0.3)'/>"
-    "<path d='M44 70 l7 7 l13 -15' stroke='#0d766e' stroke-width='4' fill='none' "
-    "stroke-linecap='round' stroke-linejoin='round'/></svg>"
+    "<svg class='hero-art' width='156' height='104' viewBox='0 0 156 104' fill='none'>"
+    "<rect x='2' y='14' width='152' height='78' rx='14' fill='#eef3fa'/>"
+    "<rect x='14' y='28' width='38' height='50' rx='8' fill='#fff' stroke='#dbe6f3'/>"
+    "<rect x='20' y='34' width='26' height='20' rx='4' fill='#cfe0f5'/>"
+    "<rect x='20' y='58' width='22' height='4' rx='2' fill='#c2cedd'/>"
+    "<rect x='20' y='65' width='16' height='4' rx='2' fill='#d7dfe9'/>"
+    "<circle cx='48' cy='32' r='9' fill='#22b892'/>"
+    "<path d='M44 32 l3 3 l5 -6' stroke='#fff' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/>"
+    "<rect x='59' y='28' width='38' height='50' rx='8' fill='#fff' stroke='#dbe6f3'/>"
+    "<rect x='65' y='34' width='26' height='20' rx='4' fill='#cfe0f5'/>"
+    "<rect x='65' y='58' width='22' height='4' rx='2' fill='#c2cedd'/>"
+    "<rect x='65' y='65' width='16' height='4' rx='2' fill='#d7dfe9'/>"
+    "<circle cx='93' cy='32' r='9' fill='#22b892'/>"
+    "<path d='M89 32 l3 3 l5 -6' stroke='#fff' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/>"
+    "<rect x='104' y='28' width='38' height='50' rx='8' fill='#fff' stroke='#f2d2cb'/>"
+    "<rect x='110' y='34' width='26' height='20' rx='4' fill='#f6ddd6'/>"
+    "<rect x='110' y='58' width='22' height='4' rx='2' fill='#e7c3ba'/>"
+    "<rect x='110' y='65' width='16' height='4' rx='2' fill='#f0d5cd'/>"
+    "<circle cx='138' cy='32' r='9' fill='#e8654f'/>"
+    "<path d='M135 29 l6 6 M141 29 l-6 6' stroke='#fff' stroke-width='2.2' stroke-linecap='round'/></svg>"
 )
 st.markdown(
     f"""
@@ -371,8 +417,8 @@ st.markdown(
       <h1>Product Recommendation Quality</h1>
       <p>Every time the AI shopping assistant shows a row of products, we check how well those
       products actually match what the customer asked for — then track it weekly and explain any change.</p>
-      <div class="verdict" style="color:{RED if moved_down else TEAL}">
-      This week: relevance {'dropped' if moved_down else 'rose'} {abs(wow):.0f} points ({last_h:.0f} → {this_h:.0f})</div>
+      <div class="verdict">
+      This week: relevance <span style="color:{'#ff9b8c' if moved_down else '#5fe0bd'} !important;font-weight:800">{'dropped' if moved_down else 'rose'} {abs(wow):.0f} points</span> ({last_h:.0f} → {this_h:.0f})</div>
     </div>
     """,
     unsafe_allow_html=True,
