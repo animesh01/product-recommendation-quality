@@ -1,4 +1,4 @@
-"""LLM-as-a-judge for Product Set Relevance.
+"""LLM-as-a-judge for Product Recommendation Quality.
 
 Given a customer query and the ranked set of products the assistant returned,
 the judge assigns each product a graded relevance score:
@@ -44,7 +44,7 @@ def product_to_text(p) -> str:
 # --------------------------------------------------------------------------- #
 # Real judge: a frontier LLM grades each product against the query.
 # --------------------------------------------------------------------------- #
-_PROMPT = """You are an evaluation judge scoring how relevant each product in a carousel is to a customer's shopping query. The per-product grades are averaged into a single Product Set Relevance (PSR) score for the carousel.
+_PROMPT = """You are an evaluation judge scoring how relevant each product in a carousel is to a customer's shopping query. The per-product grades are averaged into a single Product Recommendation Quality (PRQ) score for the carousel.
 
 Grade every product from 0 to 3:
 {grades}

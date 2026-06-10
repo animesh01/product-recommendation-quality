@@ -1,7 +1,7 @@
-"""Product Set Relevance (PSR) -- week-over-week leadership report with root-cause analysis.
+"""Product Recommendation Quality (PRQ) -- week-over-week leadership report with root-cause analysis.
 
-PSR for a carousel = average product relevance grade (0-3), scaled to 0-100.
-The report aggregates PSR by week, computes the week-over-week (WOW) change, and
+PRQ for a carousel = average product relevance grade (0-3), scaled to 0-100.
+The report aggregates PRQ by week, computes the week-over-week (WOW) change, and
 decomposes that change by intent so you can see which segments moved it. The LLM
 judge produces the grades and is calibrated against human grades.
 
@@ -20,7 +20,7 @@ from collections import defaultdict
 from relevance_judge import get_judge
 
 
-def psr(grades) -> float:
+def prq(grades) -> float:
     """Average product relevance (0-3 grades) scaled to 0-100."""
     return sum(grades) / len(grades) / 3 * 100 if grades else 0.0
 
@@ -42,7 +42,7 @@ def pearson(xs, ys) -> float:
 
 def main() -> None:
     here = os.path.dirname(os.path.abspath(__file__))
-    ap = argparse.ArgumentParser(description="PSR week-over-week report with root-cause breakdown.")
+    ap = argparse.ArgumentParser(description="PRQ week-over-week report with root-cause breakdown.")
     ap.add_argument("--data", default=os.path.join(here, "data", "sample_carousels.json"))
     ap.add_argument("--mock", action="store_true", help="use the no-API heuristic baseline")
     ap.add_argument("--model", default="claude-sonnet-4-6")
@@ -57,7 +57,7 @@ def main() -> None:
         raise SystemExit("Need at least two weeks of carousels for a WOW report.")
     last, this = weeks[-2], weeks[-1]
 
-    # grade every carousel; store PSR (judge + human) and pooled per-product grades
+    # grade every carousel; store PRQ (judge + human) and pooled per-product grades
     rows = []
     jg_all, hg_all = [], []
     print(f"\nJudge: {judge.model}   |   {len(carousels)} carousels   |   {last} -> {this}\n")
@@ -67,17 +67,17 @@ def main() -> None:
         jg = [g.grade for g in graded]
         jg_all.extend(jg); hg_all.extend(human)
         rows.append({"week": c["week"], "intent": c["intent"],
-                     "psr_j": psr(jg), "psr_h": psr(human)})
+                     "prq_j": prq(jg), "prq_h": prq(human)})
 
     def overall(week, key):
         vals = [r[key] for r in rows if r["week"] == week]
         return mean(vals)
 
-    last_h, this_h = overall(last, "psr_h"), overall(this, "psr_h")
-    last_j, this_j = overall(last, "psr_j"), overall(this, "psr_j")
+    last_h, this_h = overall(last, "prq_h"), overall(this, "prq_h")
+    last_j, this_j = overall(last, "prq_j"), overall(this, "prq_j")
     wow_h, wow_j = this_h - last_h, this_j - last_j
 
-    print("Aggregate PSR (0-100, average product relevance per carousel)")
+    print("Aggregate PRQ (0-100, average product relevance per carousel)")
     print(f"{'':22}{'judge':>9}{'human':>9}")
     print(f"  {last} (last):    {last_j:>9.1f}{last_h:>9.1f}")
     print(f"  {this} (this):    {this_j:>9.1f}{this_h:>9.1f}")
@@ -88,7 +88,7 @@ def main() -> None:
     n_last = sum(1 for r in rows if r["week"] == last)
     n_this = sum(1 for r in rows if r["week"] == this)
 
-    def seg_psr(week, intent, key):
+    def seg_prq(week, intent, key):
         vals = [r[key] for r in rows if r["week"] == week and r["intent"] == intent]
         return mean(vals)
 
@@ -97,8 +97,8 @@ def main() -> None:
 
     breakdown = []
     for it in intents:
-        ph_last, ph_this = seg_psr(last, it, "psr_h"), seg_psr(this, it, "psr_h")
-        pj_last, pj_this = seg_psr(last, it, "psr_j"), seg_psr(this, it, "psr_j")
+        ph_last, ph_this = seg_prq(last, it, "prq_h"), seg_prq(this, it, "prq_h")
+        pj_last, pj_this = seg_prq(last, it, "prq_j"), seg_prq(this, it, "prq_j")
         w_last = seg_count(last, it) / n_last
         w_this = seg_count(this, it) / n_this
         contribution = w_this * ph_this - w_last * ph_last  # sums to WOW (human)
@@ -128,14 +128,14 @@ def main() -> None:
     within1 = sum(1 for a, b in zip(jg_all, hg_all) if abs(a - b) <= 1) / n * 100
     grade_mae = sum(abs(a - b) for a, b in zip(jg_all, hg_all)) / n
     grade_r = pearson(jg_all, hg_all)
-    psr_mae = mean([abs(r["psr_j"] - r["psr_h"]) for r in rows])
+    prq_mae = mean([abs(r["prq_j"] - r["prq_h"]) for r in rows])
 
     print("\nJudge calibration vs human grades")
     print(f"  Per-product graded:    {n}")
     print(f"  Exact grade match:     {exact:5.0f}%")
     print(f"  Within +/- 1 grade:    {within1:5.0f}%")
     print(f"  Grade MAE (0-3):       {grade_mae:5.2f}")
-    print(f"  PSR MAE per carousel:  {psr_mae:5.1f} pts")
+    print(f"  PRQ MAE per carousel:  {prq_mae:5.1f} pts")
     print(f"  Grade correlation r:   {grade_r:5.2f}")
     print(f"  WOW estimate:          judge {wow_j:+.1f} vs human {wow_h:+.1f}  (gap {abs(wow_j - wow_h):.1f})")
     print("\n(With --mock this is the keyword baseline: it ignores budget, size, and")

@@ -1,6 +1,6 @@
-"""Product Recommendation Quality (PSR) — a plain-language relevance report for an AI shopping assistant.
+"""Product Recommendation Quality (PRQ) — a plain-language relevance report for an AI shopping assistant.
 
-PSR grades each product in the assistant's carousel from 0 to 3 against what the customer
+PRQ grades each product in the assistant's carousel from 0 to 3 against what the customer
 asked for, averages that to a 0-100 score per carousel, tracks it week over week, and — when
 it moves — explains why (which kinds of searches slipped, and which recent change likely caused it).
 
@@ -22,7 +22,7 @@ from relevance_judge import get_judge
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 
-# Dark theme palette (matches CQS)
+# Dark theme palette
 BG = "#0f1715"
 SURFACE = "#16211e"
 SURFACE2 = "#1d2b27"
@@ -36,7 +36,7 @@ RED = "#e26d6d"
 BLUE = "#6aa3e0"
 SAND = "#241f17"
 
-st.set_page_config(page_title="PSR — Product Set Relevance", page_icon="🛒",
+st.set_page_config(page_title="PRQ — Product Recommendation Quality", page_icon="🛒",
                    layout="wide", initial_sidebar_state="collapsed")
 
 # What each grade means, in plain words
@@ -164,7 +164,7 @@ def esc(s) -> str:
     return html.escape(str(s))
 
 
-def psr(grades) -> float:
+def prq(grades) -> float:
     return sum(grades) / len(grades) / 3 * 100 if grades else 0.0
 
 
@@ -331,7 +331,7 @@ def grade_all(judge, carousels):
         j_all.extend(jg)
         h_all.extend(human)
         rows.append({"id": c["id"], "week": c["week"], "intent": c["intent"],
-                     "query": c["query"], "psr_j": psr(jg), "psr_h": psr(human)})
+                     "query": c["query"], "prq_j": prq(jg), "prq_h": prq(human)})
     return rows, j_all, h_all
 
 
@@ -349,7 +349,7 @@ def overall(week, key):
     return mean([r[key] for r in rows if r["week"] == week])
 
 
-last_h, this_h = overall(last, "psr_h"), overall(this, "psr_h")
+last_h, this_h = overall(last, "prq_h"), overall(this, "prq_h")
 wow = this_h - last_h
 moved_down = wow < 0
 
@@ -368,7 +368,7 @@ st.markdown(
     <div class="hero">
       {art}
       <span class="pill">Search relevance report · plain-language</span>
-      <h1>Product Set Relevance</h1>
+      <h1>Product Recommendation Quality</h1>
       <p>Every time the AI shopping assistant shows a row of products, we check how well those
       products actually match what the customer asked for — then track it weekly and explain any change.</p>
       <div class="verdict" style="color:{RED if moved_down else TEAL}">
@@ -413,8 +413,8 @@ with trend_tab:
     st.markdown('<div class="section-title">Relevance score, week by week</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-copy">Each point is one week, labeled with its score. The latest '
                 'week is highlighted in amber.</div>', unsafe_allow_html=True)
-    timeline = load_json("psr_timeline.json")
-    pts = [(t["week"].replace("2026-", ""), t["psr"]) for t in timeline]
+    timeline = load_json("prq_timeline.json")
+    pts = [(t["week"].replace("2026-", ""), t["prq"]) for t in timeline]
     st.markdown(svg_line(pts, fmt="{:.0f}"), unsafe_allow_html=True)
     with st.expander("What am I looking at?"):
         st.markdown(
@@ -442,7 +442,7 @@ with cause_tab:
 
     breakdown = []
     for it in intents:
-        ph_last, ph_this = seg(last, it, "psr_h"), seg(this, it, "psr_h")
+        ph_last, ph_this = seg(last, it, "prq_h"), seg(this, it, "prq_h")
         if ph_last == 0 and ph_this == 0:
             continue
         breakdown.append((INTENT_PLAIN.get(it, it), ph_this - ph_last, ph_last, ph_this))
@@ -538,14 +538,14 @@ with trust_tab:
     with st.expander("See the score the checker gave vs the humans, per carousel"):
         trows = []
         for row in rows:
-            gap = row["psr_j"] - row["psr_h"]
+            gap = row["prq_j"] - row["prq_h"]
             gap_col = RED if gap > 5 else TEAL if gap >= -5 else AMBER
             trows.append([
                 esc(row["id"]),
                 esc(row["week"].replace("2026-", "")),
                 esc(INTENT_PLAIN.get(row["intent"], row["intent"])),
-                f"{row['psr_j']:.0f}",
-                f"{row['psr_h']:.0f}",
+                f"{row['prq_j']:.0f}",
+                f"{row['prq_h']:.0f}",
                 f"<b style='color:{gap_col}'>{gap:+.0f}</b>",
             ])
         st.markdown(
@@ -579,11 +579,11 @@ with try_tab:
         hg = [o["h"] for o in out]
 
         cc1, cc2 = st.columns(2)
-        cc1.markdown(metric_card("Relevance score", f"{psr(jg):.0f} / 100", score_color(psr(jg))),
+        cc1.markdown(metric_card("Relevance score", f"{prq(jg):.0f} / 100", score_color(prq(jg))),
                      unsafe_allow_html=True)
         cc2.markdown(
             f"<div class='mcard'><div class='lbl'>Human score</div>"
-            f"<div class='val' style='color:{score_color(psr(hg))}'>{psr(hg):.0f} / 100</div>"
+            f"<div class='val' style='color:{score_color(prq(hg))}'>{prq(hg):.0f} / 100</div>"
             f"<div class='def'>What trained human reviewers gave the same set.</div></div>",
             unsafe_allow_html=True,
         )
@@ -615,13 +615,13 @@ with try_tab:
                 'email or deck.</div>', unsafe_allow_html=True)
 
     if st.button("📋 Generate executive summary", type="primary"):
-        st.session_state["psr_show_exec"] = True
+        st.session_state["prq_show_exec"] = True
 
-    if st.session_state.get("psr_show_exec"):
+    if st.session_state.get("prq_show_exec"):
         intents_local = sorted({r["intent"] for r in rows})
 
         def seg2(week, intent):
-            return mean([r["psr_h"] for r in rows if r["week"] == week and r["intent"] == intent])
+            return mean([r["prq_h"] for r in rows if r["week"] == week and r["intent"] == intent])
 
         diffs = []
         for it in intents_local:
@@ -644,7 +644,7 @@ with try_tab:
         st.markdown(
             f"<div class='exec-card'>"
             f"<span class='tag tag-bad'>Executive summary</span>"
-            f"<h2>Product Set Relevance — {this.replace('2026-','')}</h2>"
+            f"<h2>Product Recommendation Quality — {this.replace('2026-','')}</h2>"
             f"<div class='kpi'>"
             f"<div><div class='n' style='color:{score_color(this_h)}'>{this_h:.0f}/100</div><div class='l'>This week</div></div>"
             f"<div><div class='n' style='color:{RED if moved_down else TEAL}'>{wow:+.0f}</div><div class='l'>Change</div></div>"
@@ -653,7 +653,7 @@ with try_tab:
             unsafe_allow_html=True,
         )
         plain = (
-            f"EXECUTIVE SUMMARY — Product Set Relevance ({this.replace('2026-','')})\n\n"
+            f"EXECUTIVE SUMMARY — Product Recommendation Quality ({this.replace('2026-','')})\n\n"
             + "\n".join(f"- {b}" for b in bullets)
         )
         st.write("")
